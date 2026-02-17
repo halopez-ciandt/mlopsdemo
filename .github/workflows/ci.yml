@@ -25,14 +25,18 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements-api.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
 
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements-api.txt
+
+    - name: Set PYTHONPATH
+      run: |
+        echo "PYTHONPATH=${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}:${PYTHONPATH}" >> $GITHUB_ENV
 
     - name: Lint with flake8
       run: |
@@ -49,8 +53,13 @@ jobs:
       run: |
         mypy src --ignore-missing-imports --allow-untyped-defs --allow-incomplete-defs --no-strict-optional --disable-error-code=arg-type --disable-error-code=misc
 
+    - name: Set PYTHONPATH
+      run: |
+        echo "PYTHONPATH=${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}:${PYTHONPATH}" >> $GITHUB_ENV
+
     - name: Test with pytest
       run: |
+        export PYTHONPATH="${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}:${PYTHONPATH}"
         pytest tests/ -v --tb=short
 
     - name: Upload coverage reports
@@ -78,10 +87,11 @@ jobs:
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements-api.txt
 
     - name: Train model
       run: |
+        export PYTHONPATH="${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}:${PYTHONPATH}"
         python3 -m src.models.iris_model
 
     - name: Upload model artifact
@@ -93,6 +103,7 @@ jobs:
 
     - name: Validate model performance
       run: |
+        export PYTHONPATH="${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}:${PYTHONPATH}"
         python3 -c "
         import joblib
         import numpy as np
