@@ -50,11 +50,11 @@ class DataLoader:
         logger.info(f"Dataset loaded: {X.shape[0]} samples, {X.shape[1]} features")
 
         return {
-            'features': X,
-            'target': y,
-            'feature_names': self.feature_names,
-            'target_names': self.target_names,
-            'normalized': normalize
+            "features": X,
+            "target": y,
+            "feature_names": self.feature_names,
+            "target_names": self.target_names,
+            "normalized": normalize,
         }
 
     def split_data(self, X, y, test_size=0.2, random_state=42):
@@ -73,10 +73,11 @@ class DataLoader:
         logger.info(f"Splitting data with test_size={test_size}")
 
         return train_test_split(
-            X, y,
+            X,
+            y,
             test_size=test_size,
             random_state=random_state,
-            stratify=y  # Ensure balanced split
+            stratify=y,  # Ensure balanced split
         )
 
     def get_data_summary(self, X, y):
@@ -90,20 +91,22 @@ class DataLoader:
         Returns:
             dict: Summary statistics
         """
-        if not hasattr(X, 'shape'):
+        if not hasattr(X, "shape"):
             X = np.array(X)
-        if not hasattr(y, 'shape'):
+        if not hasattr(y, "shape"):
             y = np.array(y)
 
         summary = {
-            'n_samples': X.shape[0],
-            'n_features': X.shape[1] if len(X.shape) > 1 else 1,
-            'n_classes': len(np.unique(y)),
-            'class_distribution': dict(zip(*np.unique(y, return_counts=True))),
-            'feature_stats': {
-                'mean': np.mean(X, axis=0).tolist() if len(X.shape) > 1 else [np.mean(X)],
-                'std': np.std(X, axis=0).tolist() if len(X.shape) > 1 else [np.std(X)]
-            }
+            "n_samples": X.shape[0],
+            "n_features": X.shape[1] if len(X.shape) > 1 else 1,
+            "n_classes": len(np.unique(y)),
+            "class_distribution": dict(zip(*np.unique(y, return_counts=True))),
+            "feature_stats": {
+                "mean": np.mean(X, axis=0).tolist()
+                if len(X.shape) > 1
+                else [np.mean(X)],
+                "std": np.std(X, axis=0).tolist() if len(X.shape) > 1 else [np.std(X)],
+            },
         }
 
         return summary
@@ -128,10 +131,7 @@ def prepare_data_pipeline(normalize=False, test_size=0.2, random_state=42):
 
     # Split data
     X_train, X_test, y_train, y_test = loader.split_data(
-        data['features'],
-        data['target'],
-        test_size=test_size,
-        random_state=random_state
+        data["features"], data["target"], test_size=test_size, random_state=random_state
     )
 
     # Get summaries
@@ -139,13 +139,13 @@ def prepare_data_pipeline(normalize=False, test_size=0.2, random_state=42):
     test_summary = loader.get_data_summary(X_test, y_test)
 
     return {
-        'X_train': X_train,
-        'X_test': X_test,
-        'y_train': y_train,
-        'y_test': y_test,
-        'feature_names': data['feature_names'],
-        'target_names': data['target_names'],
-        'train_summary': train_summary,
-        'test_summary': test_summary,
-        'normalized': normalize
+        "X_train": X_train,
+        "X_test": X_test,
+        "y_train": y_train,
+        "y_test": y_test,
+        "feature_names": data["feature_names"],
+        "target_names": data["target_names"],
+        "train_summary": train_summary,
+        "test_summary": test_summary,
+        "normalized": normalize,
     }

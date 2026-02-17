@@ -31,8 +31,8 @@ class TestIrisModel:
         # Check data structure
         assert isinstance(data, pd.DataFrame)
         assert data.shape[0] == 150  # Iris has 150 samples
-        assert data.shape[1] == 5    # 4 features + 1 target
-        assert 'target' in data.columns
+        assert data.shape[1] == 5  # 4 features + 1 target
+        assert "target" in data.columns
 
         # Check feature and target names are set
         assert self.model.feature_names is not None
@@ -44,8 +44,8 @@ class TestIrisModel:
         """Test model training and prediction."""
         # Load data
         data = self.model.load_data()
-        X = data.drop('target', axis=1)
-        y = data['target']
+        X = data.drop("target", axis=1)
+        y = data["target"]
 
         # Train model
         self.model.train(X, y)
@@ -66,8 +66,8 @@ class TestIrisModel:
         """Test model evaluation."""
         # Load and prepare data
         data = self.model.load_data()
-        X = data.drop('target', axis=1)
-        y = data['target']
+        X = data.drop("target", axis=1)
+        y = data["target"]
 
         # Train model
         self.model.train(X, y)
@@ -76,20 +76,20 @@ class TestIrisModel:
         metrics = self.model.evaluate(X, y)
 
         # Check metrics structure
-        assert 'accuracy' in metrics
-        assert 'classification_report' in metrics
-        assert 'confusion_matrix' in metrics
+        assert "accuracy" in metrics
+        assert "classification_report" in metrics
+        assert "confusion_matrix" in metrics
 
         # Check accuracy is reasonable
-        assert 0.0 <= metrics['accuracy'] <= 1.0
-        assert metrics['accuracy'] > 0.8  # Should be high on training data
+        assert 0.0 <= metrics["accuracy"] <= 1.0
+        assert metrics["accuracy"] > 0.8  # Should be high on training data
 
     def test_save_and_load_model(self):
         """Test model saving and loading."""
         # Train a model
         data = self.model.load_data()
-        X = data.drop('target', axis=1)
-        y = data['target']
+        X = data.drop("target", axis=1)
+        y = data["target"]
         self.model.train(X, y)
 
         # Get predictions before saving
@@ -122,8 +122,8 @@ class TestIrisModel:
 
         # Check that metrics are returned
         assert isinstance(metrics, dict)
-        assert 'accuracy' in metrics
-        assert metrics['accuracy'] > 0.0
+        assert "accuracy" in metrics
+        assert metrics["accuracy"] > 0.0
 
         # Check that model file was created
         model_path = Path("models/iris_model.joblib")

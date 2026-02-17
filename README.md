@@ -54,7 +54,7 @@ This project demonstrates a production-ready MLOps workflow including:
 # Clone and setup
 git clone <repo-url>
 cd mlopsdemo
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
 

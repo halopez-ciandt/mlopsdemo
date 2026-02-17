@@ -18,26 +18,26 @@ class TestDataLoader:
         data = self.loader.load_iris_data()
 
         # Check data structure
-        assert 'features' in data
-        assert 'target' in data
-        assert 'feature_names' in data
-        assert 'target_names' in data
+        assert "features" in data
+        assert "target" in data
+        assert "feature_names" in data
+        assert "target_names" in data
 
         # Check dimensions
-        assert data['features'].shape == (150, 4)
-        assert data['target'].shape == (150,)
-        assert len(data['feature_names']) == 4
-        assert len(data['target_names']) == 3
+        assert data["features"].shape == (150, 4)
+        assert data["target"].shape == (150,)
+        assert len(data["feature_names"]) == 4
+        assert len(data["target_names"]) == 3
 
         # Check normalization flag
-        assert data['normalized'] == False
+        assert data["normalized"] == False
 
     def test_load_iris_data_normalized(self):
         """Test Iris data loading with normalization."""
         data = self.loader.load_iris_data(normalize=True)
 
         # Check that features are normalized (mean ≈ 0, std ≈ 1)
-        features = data['features']
+        features = data["features"]
         means = np.mean(features, axis=0)
         stds = np.std(features, axis=0)
 
@@ -45,7 +45,7 @@ class TestDataLoader:
         np.testing.assert_array_almost_equal(stds, [1, 1, 1, 1], decimal=10)
 
         # Check normalization flag
-        assert data['normalized'] == True
+        assert data["normalized"] == True
 
     def test_split_data(self):
         """Test data splitting."""
@@ -75,21 +75,21 @@ class TestDataLoader:
         summary = self.loader.get_data_summary(X, y)
 
         # Check summary structure
-        assert 'n_samples' in summary
-        assert 'n_features' in summary
-        assert 'n_classes' in summary
-        assert 'class_distribution' in summary
-        assert 'feature_stats' in summary
+        assert "n_samples" in summary
+        assert "n_features" in summary
+        assert "n_classes" in summary
+        assert "class_distribution" in summary
+        assert "feature_stats" in summary
 
         # Check values
-        assert summary['n_samples'] == 3
-        assert summary['n_features'] == 2
-        assert summary['n_classes'] == 2
-        assert summary['class_distribution'] == {0: 2, 1: 1}
+        assert summary["n_samples"] == 3
+        assert summary["n_features"] == 2
+        assert summary["n_classes"] == 2
+        assert summary["class_distribution"] == {0: 2, 1: 1}
 
         # Check feature stats
         expected_means = [3.0, 4.0]  # Mean of [1,3,5] and [2,4,6]
-        assert summary['feature_stats']['mean'] == expected_means
+        assert summary["feature_stats"]["mean"] == expected_means
 
 
 class TestPrepareDataPipeline:
@@ -101,36 +101,42 @@ class TestPrepareDataPipeline:
 
         # Check all required keys are present
         required_keys = [
-            'X_train', 'X_test', 'y_train', 'y_test',
-            'feature_names', 'target_names',
-            'train_summary', 'test_summary', 'normalized'
+            "X_train",
+            "X_test",
+            "y_train",
+            "y_test",
+            "feature_names",
+            "target_names",
+            "train_summary",
+            "test_summary",
+            "normalized",
         ]
 
         for key in required_keys:
             assert key in result
 
         # Check data dimensions
-        assert result['X_train'].shape[0] == 120  # 80% of 150
-        assert result['X_test'].shape[0] == 30    # 20% of 150
-        assert result['X_train'].shape[1] == 4    # 4 features
-        assert result['X_test'].shape[1] == 4
+        assert result["X_train"].shape[0] == 120  # 80% of 150
+        assert result["X_test"].shape[0] == 30  # 20% of 150
+        assert result["X_train"].shape[1] == 4  # 4 features
+        assert result["X_test"].shape[1] == 4
 
         # Check that summaries are dictionaries
-        assert isinstance(result['train_summary'], dict)
-        assert isinstance(result['test_summary'], dict)
+        assert isinstance(result["train_summary"], dict)
+        assert isinstance(result["test_summary"], dict)
 
         # Check normalization flag
-        assert result['normalized'] == False
+        assert result["normalized"] == False
 
     def test_prepare_data_pipeline_normalized(self):
         """Test pipeline with normalization."""
         result = prepare_data_pipeline(normalize=True)
 
         # Check normalization flag
-        assert result['normalized'] == True
+        assert result["normalized"] == True
 
         # Check that features are normalized
-        X_combined = np.vstack([result['X_train'], result['X_test']])
+        X_combined = np.vstack([result["X_train"], result["X_test"]])
         means = np.mean(X_combined, axis=0)
         stds = np.std(X_combined, axis=0)
 
@@ -143,5 +149,5 @@ class TestPrepareDataPipeline:
         result = prepare_data_pipeline(test_size=0.3, random_state=123)
 
         # Check split sizes with custom test_size
-        assert result['X_train'].shape[0] == 105  # 70% of 150
-        assert result['X_test'].shape[0] == 45    # 30% of 150
+        assert result["X_train"].shape[0] == 105  # 70% of 150
+        assert result["X_test"].shape[0] == 45  # 30% of 150
