@@ -3,11 +3,18 @@ services:
     name: iris-classification-api
     runtime: python3
     buildCommand: |
+      echo "Starting build process..."
       pip install --upgrade pip
       pip install -r requirements-api.txt
       mkdir -p models
-      cd /opt/render/project && python3 -m src.models.iris_model
-    startCommand: cd /opt/render/project && python3 -m uvicorn src.api.app:app --host 0.0.0.0 --port $PORT --workers 1
+      echo "Training model..."
+      export PYTHONPATH=/opt/render/project/src:/opt/render/project
+      python3 -m src.models.iris_model
+      echo "Build complete!"
+    startCommand: |
+      echo "Starting server..."
+      export PYTHONPATH=/opt/render/project/src:/opt/render/project
+      python3 -m uvicorn src.api.app:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: PYTHONPATH
         value: /opt/render/project/src:/opt/render/project

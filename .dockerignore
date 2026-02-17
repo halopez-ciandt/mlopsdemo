@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+.env
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Development
+.git/
+.github/
+.vscode/
+.idea/
+*.md
+!README.md
+
+# Local files
+models/
+data/raw/
+data/processed/
+notebooks/
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

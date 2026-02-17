@@ -17,13 +17,12 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # Copy source code
 COPY src/ src/
-COPY models/ models/
+
+# Create models directory and train model
+RUN mkdir -p models && python3 -m src.models.iris_model
 
 # Set Python path
-ENV PYTHONPATH=/app/src
-
-# Train model if not exists
-RUN python3 -m src.models.iris_model || echo "Model training failed, will train at runtime"
+ENV PYTHONPATH=/app/src:/app
 
 # Expose port
 EXPOSE 8000
