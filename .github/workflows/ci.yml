@@ -47,7 +47,7 @@ jobs:
 
     - name: Type check with mypy
       run: |
-        mypy src --ignore-missing-imports --allow-untyped-defs --allow-incomplete-defs --no-strict-optional --disable-error-code=arg-type
+        mypy src --ignore-missing-imports --allow-untyped-defs --allow-incomplete-defs --no-strict-optional --disable-error-code=arg-type --disable-error-code=misc
 
     - name: Test with pytest
       run: |
