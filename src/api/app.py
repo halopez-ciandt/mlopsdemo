@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Iris Classification API",
     description="MLOps Demo - Iris flower classification using Random Forest",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Add CORS middleware
@@ -39,6 +39,7 @@ except RuntimeError:
     # Static directory might not exist in some deployments
     pass
 
+
 # Pydantic models for request/response
 class IrisFeatures(BaseModel):
     sepal_length: float = Field(..., ge=0, le=10, description="Sepal length in cm")
@@ -52,12 +53,14 @@ class IrisFeatures(BaseModel):
                 "sepal_length": 5.1,
                 "sepal_width": 3.5,
                 "petal_length": 1.4,
-                "petal_width": 0.2
+                "petal_width": 0.2,
             }
         }
 
+
 class BatchIrisFeatures(BaseModel):
     samples: List[IrisFeatures]
+
 
 class PredictionResponse(BaseModel):
     prediction: str
@@ -65,14 +68,22 @@ class PredictionResponse(BaseModel):
     confidence: float
     probabilities: Dict[str, float]
 
+
 class BatchPredictionResponse(BaseModel):
     predictions: List[PredictionResponse]
     batch_size: int
 
+
 # Global model variable
 model = None
-feature_names = ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
-target_names = ['setosa', 'versicolor', 'virginica']
+feature_names = [
+    "sepal length (cm)",
+    "sepal width (cm)",
+    "petal length (cm)",
+    "petal width (cm)",
+]
+target_names = ["setosa", "versicolor", "virginica"]
+
 
 def load_model():
     """Load the trained model from file."""
@@ -82,7 +93,7 @@ def load_model():
     model_paths = [
         "models/iris_model.joblib",
         "/app/models/iris_model.joblib",
-        "iris_model.joblib"
+        "iris_model.joblib",
     ]
 
     for model_path in model_paths:
@@ -102,8 +113,8 @@ def load_model():
 
         iris_model = IrisModel()
         data = iris_model.load_data()
-        X = data.drop('target', axis=1)
-        y = data['target']
+        X = data.drop("target", axis=1)
+        y = data["target"]
         iris_model.train(X, y)
 
         # Save the model
@@ -116,10 +127,12 @@ def load_model():
         logger.error(f"Failed to train new model: {e}")
         raise RuntimeError("Could not load or train model")
 
+
 @app.on_event("startup")
 async def startup_event():
     """Load model on startup."""
     load_model()
+
 
 @app.get("/")
 async def root():
@@ -135,9 +148,10 @@ async def root():
                 "predict": "/predict - Single prediction",
                 "predict_batch": "/predict/batch - Batch predictions",
                 "health": "/health - Health check",
-                "docs": "/docs - API documentation"
-            }
+                "docs": "/docs - API documentation",
+            },
         }
+
 
 @app.get("/api")
 async def api_info():
@@ -150,9 +164,10 @@ async def api_info():
             "predict": "/predict - Single prediction",
             "predict_batch": "/predict/batch - Batch predictions",
             "health": "/health - Health check",
-            "docs": "/docs - API documentation"
-        }
+            "docs": "/docs - API documentation",
+        },
     }
+
 
 @app.get("/health")
 async def health_check():
@@ -163,8 +178,9 @@ async def health_check():
     return {
         "status": "healthy",
         "model_loaded": model is not None,
-        "timestamp": "2024-01-01T00:00:00Z"
+        "timestamp": "2024-01-01T00:00:00Z",
     }
+
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(features: IrisFeatures):
@@ -174,12 +190,16 @@ async def predict(features: IrisFeatures):
 
     try:
         # Convert features to numpy array
-        feature_array = np.array([[
-            features.sepal_length,
-            features.sepal_width,
-            features.petal_length,
-            features.petal_width
-        ]])
+        feature_array = np.array(
+            [
+                [
+                    features.sepal_length,
+                    features.sepal_width,
+                    features.petal_length,
+                    features.petal_width,
+                ]
+            ]
+        )
 
         # Make prediction
         prediction_id = int(model.predict(feature_array)[0])
@@ -189,18 +209,21 @@ async def predict(features: IrisFeatures):
         probabilities = model.predict_proba(feature_array)[0]
         confidence = float(max(probabilities))
 
-        prob_dict = {name: float(prob) for name, prob in zip(target_names, probabilities)}
+        prob_dict = {
+            name: float(prob) for name, prob in zip(target_names, probabilities)
+        }
 
         return PredictionResponse(
             prediction=prediction_name,
             prediction_id=prediction_id,
             confidence=confidence,
-            probabilities=prob_dict
+            probabilities=prob_dict,
         )
 
     except Exception as e:
         logger.error(f"Prediction error: {e}")
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
 
 @app.post("/predict/batch", response_model=BatchPredictionResponse)
 async def predict_batch(batch: BatchIrisFeatures):
@@ -209,19 +232,25 @@ async def predict_batch(batch: BatchIrisFeatures):
         raise HTTPException(status_code=503, detail="Model not loaded")
 
     if len(batch.samples) > 100:
-        raise HTTPException(status_code=400, detail="Batch size cannot exceed 100 samples")
+        raise HTTPException(
+            status_code=400, detail="Batch size cannot exceed 100 samples"
+        )
 
     try:
         predictions = []
 
         for sample in batch.samples:
             # Convert features to numpy array
-            feature_array = np.array([[
-                sample.sepal_length,
-                sample.sepal_width,
-                sample.petal_length,
-                sample.petal_width
-            ]])
+            feature_array = np.array(
+                [
+                    [
+                        sample.sepal_length,
+                        sample.sepal_width,
+                        sample.petal_length,
+                        sample.petal_width,
+                    ]
+                ]
+            )
 
             # Make prediction
             prediction_id = int(model.predict(feature_array)[0])
@@ -231,23 +260,29 @@ async def predict_batch(batch: BatchIrisFeatures):
             probabilities = model.predict_proba(feature_array)[0]
             confidence = float(max(probabilities))
 
-            prob_dict = {name: float(prob) for name, prob in zip(target_names, probabilities)}
+            prob_dict = {
+                name: float(prob) for name, prob in zip(target_names, probabilities)
+            }
 
-            predictions.append(PredictionResponse(
-                prediction=prediction_name,
-                prediction_id=prediction_id,
-                confidence=confidence,
-                probabilities=prob_dict
-            ))
+            predictions.append(
+                PredictionResponse(
+                    prediction=prediction_name,
+                    prediction_id=prediction_id,
+                    confidence=confidence,
+                    probabilities=prob_dict,
+                )
+            )
 
         return BatchPredictionResponse(
-            predictions=predictions,
-            batch_size=len(predictions)
+            predictions=predictions, batch_size=len(predictions)
         )
 
     except Exception as e:
         logger.error(f"Batch prediction error: {e}")
-        raise HTTPException(status_code=500, detail=f"Batch prediction failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Batch prediction failed: {str(e)}"
+        )
+
 
 @app.get("/model/info")
 async def model_info():
@@ -260,10 +295,12 @@ async def model_info():
         "features": feature_names,
         "target_classes": target_names,
         "n_features": len(feature_names),
-        "n_classes": len(target_names)
+        "n_classes": len(target_names),
     }
+
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
