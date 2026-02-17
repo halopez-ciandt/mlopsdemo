@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, "3.10", "3.11"]
+        python-version: [3.9, "3.10"]
 
     steps:
     - uses: actions/checkout@v4
@@ -33,6 +33,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install -r requirements-api.txt
+        pip install -e .
 
     - name: Set PYTHONPATH
       run: |
@@ -88,6 +89,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install -r requirements-api.txt
+        pip install -e .
 
     - name: Train model
       run: |
