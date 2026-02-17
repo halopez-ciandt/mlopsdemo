@@ -10,7 +10,7 @@ import joblib
 import numpy as np
 from pathlib import Path
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import os
 
 # Set up logging
@@ -85,7 +85,7 @@ feature_names = [
 target_names = ["setosa", "versicolor", "virginica"]
 
 
-def load_model():
+def load_model() -> None:
     """Load the trained model from file."""
     global model
 
@@ -129,13 +129,13 @@ def load_model():
 
 
 @app.on_event("startup")
-async def startup_event():
+async def startup_event() -> None:
     """Load model on startup."""
     load_model()
 
 
 @app.get("/")
-async def root():
+async def root() -> Any:
     """Serve the web interface."""
     try:
         return FileResponse("static/index.html")
@@ -154,7 +154,7 @@ async def root():
 
 
 @app.get("/api")
-async def api_info():
+async def api_info() -> Dict[str, Any]:
     """API information endpoint."""
     return {
         "message": "Iris Classification API",
@@ -170,7 +170,7 @@ async def api_info():
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> Dict[str, Any]:
     """Health check endpoint."""
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
@@ -183,7 +183,7 @@ async def health_check():
 
 
 @app.post("/predict", response_model=PredictionResponse)
-async def predict(features: IrisFeatures):
+async def predict(features: IrisFeatures) -> PredictionResponse:
     """Make a single prediction."""
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
@@ -226,7 +226,7 @@ async def predict(features: IrisFeatures):
 
 
 @app.post("/predict/batch", response_model=BatchPredictionResponse)
-async def predict_batch(batch: BatchIrisFeatures):
+async def predict_batch(batch: BatchIrisFeatures) -> BatchPredictionResponse:
     """Make batch predictions."""
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
@@ -285,7 +285,7 @@ async def predict_batch(batch: BatchIrisFeatures):
 
 
 @app.get("/model/info")
-async def model_info():
+async def model_info() -> Dict[str, Any]:
     """Get model information."""
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")

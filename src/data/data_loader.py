@@ -7,6 +7,8 @@ from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import logging
+from typing import Dict, Any, Tuple, List
+import numpy.typing as npt
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +16,13 @@ logger = logging.getLogger(__name__)
 class DataLoader:
     """Data loading and preprocessing utilities."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize data loader."""
         self.scaler = StandardScaler()
         self.feature_names = None
         self.target_names = None
 
-    def load_iris_data(self, normalize=False):
+    def load_iris_data(self, normalize: bool = False) -> Dict[str, Any]:
         """
         Load Iris dataset.
 
@@ -57,7 +59,7 @@ class DataLoader:
             "normalized": normalize,
         }
 
-    def split_data(self, X, y, test_size=0.2, random_state=42):
+    def split_data(self, X: Any, y: Any, test_size: float = 0.2, random_state: int = 42) -> Any:
         """
         Split data into training and testing sets.
 
@@ -80,7 +82,7 @@ class DataLoader:
             stratify=y,  # Ensure balanced split
         )
 
-    def get_data_summary(self, X, y):
+    def get_data_summary(self, X: Any, y: Any) -> Dict[str, Any]:
         """
         Get summary statistics of the dataset.
 
@@ -112,7 +114,7 @@ class DataLoader:
         return summary
 
 
-def prepare_data_pipeline(normalize=False, test_size=0.2, random_state=42):
+def prepare_data_pipeline(normalize: bool = False, test_size: float = 0.2, random_state: int = 42) -> Dict[str, Any]:
     """
     Complete data preparation pipeline.
 
