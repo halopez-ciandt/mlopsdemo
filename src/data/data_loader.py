@@ -59,7 +59,9 @@ class DataLoader:
             "normalized": normalize,
         }
 
-    def split_data(self, X: Any, y: Any, test_size: float = 0.2, random_state: int = 42) -> Any:
+    def split_data(
+        self, X: Any, y: Any, test_size: float = 0.2, random_state: int = 42
+    ) -> Any:
         """
         Split data into training and testing sets.
 
@@ -114,7 +116,9 @@ class DataLoader:
         return summary
 
 
-def prepare_data_pipeline(normalize: bool = False, test_size: float = 0.2, random_state: int = 42) -> Dict[str, Any]:
+def prepare_data_pipeline(
+    normalize: bool = False, test_size: float = 0.2, random_state: int = 42
+) -> Dict[str, Any]:
     """
     Complete data preparation pipeline.
 
