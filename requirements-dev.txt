@@ -1,0 +1,12 @@
+# Core API dependencies
+-r requirements-api.txt
+
+# Development and testing dependencies
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0
+mypy==1.5.1
+
+# Additional testing tools
+pytest-cov==4.1.0
+httpx==0.25.2
