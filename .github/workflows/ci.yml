@@ -50,8 +50,9 @@ jobs:
         mypy src --ignore-missing-imports --allow-untyped-defs --allow-incomplete-defs --no-strict-optional --disable-error-code=arg-type --disable-error-code=misc
 
     - name: Test with pytest
+      env:
+        PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
       run: |
-        export PYTHONPATH="${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}"
         pytest tests/ -v --tb=short
 
     - name: Upload coverage reports
