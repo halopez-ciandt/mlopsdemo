@@ -35,10 +35,6 @@ jobs:
         pip install -r requirements-dev.txt
         pip install -e .
 
-    - name: Set PYTHONPATH
-      run: |
-        echo "PYTHONPATH=${GITHUB_WORKSPACE}/src:${GITHUB_WORKSPACE}:${PYTHONPATH}" >> $GITHUB_ENV
-
     - name: Lint with flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
